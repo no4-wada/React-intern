@@ -22,6 +22,7 @@
     "@fullcalendar/daygrid": "^6.1.11",
     "@fullcalendar/interaction": "^6.1.11",
     "@fullcalendar/react": "^6.1.11",
+    "create-vite": "^5.2.3",
     "dayjs": "^1.11.10",
     "framer-motion": "^7.0.0",
     "react": "^18.2.0",
