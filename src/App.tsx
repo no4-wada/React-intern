@@ -7,7 +7,6 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import allLocales from '@fullcalendar/core/locales-all';
 import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import { INITIAL_EVENTS, createEventId } from './event-utils'
-//import { Calendar, EventInput } from "@fullcalendar/core";
 
 // モーダルを表示する関数
 function showModal() {
@@ -52,18 +51,12 @@ function App() {
 
       e.preventDefault();
 
-
-
       // イベント内容の取得
       const title : string= e.target.title.value;
       const content :string = e.target.content.value;
       const start :string = e.target.start.value;
       const end :string = e.target.end.value;
       
-      /*/
-      let eventApi : string = calendarApi.getEventById('1');
-      eventApi.setResources([ 'title', 'content', 'start', 'end' ]),
-      /*/
       //if (title && content && start && end) {}
         calendarApi.addEvent({
         id: createEventId(),
@@ -103,16 +96,10 @@ function App() {
 
       e.preventDefault();
 
-
-
       // イベント内容の取得
       const title : string= e.target.title.value;
       const content :string = e.target.content.value;
       
-      /*/
-      let eventApi : string = calendarApi.getEventById('1');
-      eventApi.setResources([ 'title', 'content', 'start', 'end' ]),
-      /*/
       //if (title && content && start && end) {}
         calendarApi.addEvent({
         id: createEventId(),
@@ -123,10 +110,8 @@ function App() {
         end: selectInfo.date,
         // allDay: selectInfo.allDay,
         })
-      // console.log(end)
-      // console.log(start)
       e.target.title.value = ""
-
+        console.log(selectInfo.date);
       
       calendarApi.unselect();
       }
@@ -141,7 +126,6 @@ function App() {
     const beforeContent :string = clickInfo.event._def.extendedProps.content;
     const beforeStart :string = clickInfo.event.startStr;
     const beforeEnd :string = clickInfo.event.endStr;  
-    console.log (clickInfo.event.endStr);
     // console.log (clickInfo.event._instance.range.end);
     // モーダルウィンドウ(編集)の表示
     showModal();
