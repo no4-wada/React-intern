@@ -5,9 +5,59 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + React + TS</title>
+    <style>
+     /* モーダルのスタイル */
+        #modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: white;
+            border: 1px solid black;
+            z-index: 1000;
+        }
+        /* 背景のスタイル */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 999;
+        }
+    </style>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <!-- モーダルウィンドウの表示()　-->
+    <div id="modal">
+      <form>
+        <div class="Form-Item">
+          <p class="Form-Item-Label">タイトル</p>
+          <input id="modal_title_input" type="text" class="Form-Item-Input" data-dismiss="modalTitle" name="title">
+        </div>
+        <div class="Form-Item">
+          <p class="Form-Item-Label">内容</p>
+          <textarea class="Form-Item-Textarea"  cols="20" rows="3" name="content">aaaa</textarea>
+        </div>
+        <div class="Form-Item">
+          <p class="Form-Item-Label">開始時刻</p>
+          <input type="text" class="Form-Item-Input" value="例）HH-MM-SS" name="start">
+        </div>
+        <div class="Form-Item">
+          <p class="Form-Item-Label isMsg">終了時刻</p>
+          <input type="text" class="Form-Item-Input" value="例）HH-MM-SS" name="end">
+        </div>
+        <input type="submit" class="Form-Btn" value="送信する" id ="sendModal">
+      </form>
+      <button id="closeModal">閉じる</button>
+    </div>
+    
+
+    
   </body>
 </html>
