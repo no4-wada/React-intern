@@ -10,11 +10,15 @@ export const INITIAL_EVENTS: EventInput[] = [
     content: "wow",
     start: todayStr,
     end: todayStr + "T11:00:00",
+    startDate: todayStr + "T4:00:00", // 時刻はTで結ぶ
+    endDate: todayStr + "T11:00:00",
   },
   {
     id: createEventId(),
     title: "Timed event",
     content: "Timedcontent",
+    start: todayStr,
+    end: todayStr + "T7:00:00",
     startDate: todayStr + "T4:00:00", // 時刻はTで結ぶ
     endDate: todayStr + "T11:00:00",
   },

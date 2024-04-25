@@ -1,4 +1,4 @@
-import type { EventContentArg, EventInput } from "@fullcalendar/core";
+import { type EventContentArg, type EventInput } from "@fullcalendar/core";
 import FullCalendar from "@fullcalendar/react";
 import { useCallback, useState } from "react";
 import type { EventClickArg } from "@fullcalendar/core";
@@ -7,7 +7,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import type { DateClickArg } from "@fullcalendar/interaction";
 import interactionPlugin from "@fullcalendar/interaction";
 import { INITIAL_EVENTS, createEventId } from "./event-utils";
-import { EventImpl } from "@fullcalendar/core/internal";
+import type { EventImpl } from "@fullcalendar/core/internal";
 
 function renderEventContent(eventInfo: EventContentArg) {
   return (
@@ -20,17 +20,17 @@ function renderEventContent(eventInfo: EventContentArg) {
   );
 }
 
-
 function App() {
   // モーダルの開閉状態を管理
   const [showModal, setShowModal] = useState<boolean>(false);
 
   // モーダルを管理
   const [isShowedAddModal, setisShowAddModal] = useState<boolean>(false);
+
   // イベントの管理
   const [events, setEvents] = useState<EventInput[]>([]);
 
-  // イベントの管理
+  // イベントの削除
   const [deleteEvent, setdeleteEvents] = useState<EventImpl>();
 
   // イベント日の管理
@@ -40,18 +40,18 @@ function App() {
   // [要素、更新関数] = useState< 型 >("初期値")
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
+  const [startDate, setstart] = useState<string>("");
+  const [endDate, setend] = useState<string>("");
 
   const handleDateClick = useCallback(({ date }: DateClickArg): void => {
     // イベント日をセット
     setSelectedDate(date);
-    console.log(date)
+    console.log(date);
 
     // モーダルウィンドウ(追加)の表示
     setShowModal(true);
     setisShowAddModal(true);
-  }, [isShowedAddModal]);
+  }, []);
 
   // 送信する押下時処理
   const handleClickSendButton = useCallback((): void => {
@@ -77,8 +77,8 @@ function App() {
     setSelectedDate(null);
     setTitle("");
     setContent("");
-    setStartDate("");
-    setEndDate("");
+    setstart("");
+    setend("");
 
     // モーダルを閉じる
     setShowModal(false);
@@ -86,53 +86,67 @@ function App() {
   }, [content, endDate, selectedDate, startDate, title]);
 
   // イベントクリック時の表示処理
-  const handleEventClick = useCallback((clickInfo: EventClickArg) => {
+  const handleEventClick = useCallback(
+    (clickInfo: EventClickArg) => {
+      // 編集前のイベントを取得
+      const beforeTitle: string = clickInfo.event._def.title;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const beforeContent: string = clickInfo.event._def.extendedProps.content;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const beforestart: string = clickInfo.event.extendedProps.startDate;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const beforeend: string = clickInfo.event.extendedProps.endDate;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const deleteEvent: EventImpl = clickInfo.event;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const date: Date | null = clickInfo.event.start;
+      // const Event: EventImpl = clickInfo.event.getResources();
 
-    // 編集前のイベントを取得
-    const beforeTitle : string= clickInfo.event._def.title
-    const beforeContent :string = clickInfo.event._def.extendedProps.content
-    const beforeStartDate :string = clickInfo.event.extendedProps.startDate
-    const beforeEndDate :string = clickInfo.event.extendedProps.endDate  
-    
-    const deleteEvent :EventImpl = clickInfo.event
+      // 各要素にセット
+      setTitle(beforeTitle);
+      setContent(beforeContent);
+      setstart(beforestart);
+      setend(beforeend);
+      setdeleteEvents(deleteEvent);
+      setSelectedDate(date);
+      // clickInfo.view.calendar.select(,end?: DateMaker[]): void
+      // console.log(clickInfo.view.calendar.currentDataManager.updateData());
+      console.log(clickInfo);
+      console.log(startDate);
 
-    // 各要素にセット
-    setTitle(beforeTitle);
-    setContent(beforeContent);
-    setStartDate(beforeStartDate);
-    setEndDate(beforeEndDate);
+      // モーダルウィンドウ(編集)の表示
+      setShowModal(true);
+    },
+    [startDate]
+  );
 
-    setdeleteEvents(deleteEvent);
-
-    // こっちでの削除はできます
-    //deleteEvent.remove()
-    
-    console.log(clickInfo.event._def.defId)
-
-    // モーダルウィンドウ(編集)の表示
-    setShowModal(true);
-  }, []);
-
-  // イベント削除時の処理
-  const handleClickDeleteButton = useCallback((): void => {
-    if (
-      window.confirm(`このイベント「」を削除しますか`)
-    ) {
-
-      deleteEvent?.remove();
-      }
-  },[]);
-
-
-  /*/ 更新する押下時処理
+  // 更新する押下時処理
   const handleClickEditButton = useCallback((): void => {
     // イベントの中身がない場合はなにもせずreturn
     if (!title && !content) {
       return;
     }
-  
-  
-  // イベント更新
+
+    deleteEvent?.setExtendedProp(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      deleteEvent?._def.extendedProps.content,
+      content
+    );
+    console.log(deleteEvent?.extendedProps.content);
+    /*/
+    deleteEvent?.setExtendedProp(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      deleteEvent.extendedProps.startDate,
+      startDate
+    );
+    deleteEvent?.setExtendedProp(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      deleteEvent.extendedProps.endDate,
+      endDate
+    );
+    // content;
+
+     イベント更新
     setEvents((prev: EventInput[]): EventInput[] => [
       ...prev,
       {
@@ -144,18 +158,28 @@ function App() {
         date: selectedDate,
       },
     ]);
-
+    deleteEvent?.remove();
+    /*/
     // イベント内容をクリア
     setSelectedDate(null);
     setTitle("");
     setContent("");
-    setStartDate("");
-    setEndDate("");
+    setstart("");
+    setend("");
 
     // モーダルを閉じる
     setShowModal(false);
-  }, [content, endDate, selectedDate, startDate, title]);
-  /*/
+  }, [content, endDate, selectedDate, startDate, title, deleteEvent]);
+
+  // イベント削除時の処理
+  const handleClickDeleteButton = useCallback((): void => {
+    if (window.confirm(`このイベント「」を削除しますか`)) {
+      deleteEvent?.remove();
+    }
+
+    // モーダルを閉じる
+    setShowModal(false);
+  }, [deleteEvent]);
 
   const handleChangeTitle = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -171,16 +195,16 @@ function App() {
     []
   );
 
-  const handleChangeStartDate = useCallback(
+  const handleChangestart = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>): void => {
-      setStartDate(event.target.value);
+      setstart(event.target.value);
     },
     []
   );
 
-  const handleChangeEndDate = useCallback(
+  const handleChangeend = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>): void => {
-      setEndDate(event.target.value);
+      setend(event.target.value);
     },
     []
   );
@@ -240,7 +264,7 @@ function App() {
                 className="Form-Item-Input"
                 placeholder="例）HH-MM-SS"
                 value={startDate}
-                onChange={handleChangeStartDate}
+                onChange={handleChangestart}
               />
             </div>
             <div className="Form-Item">
@@ -250,7 +274,7 @@ function App() {
                 className="Form-Item-Input"
                 placeholder="例）HH-MM-SS"
                 value={endDate}
-                onChange={handleChangeEndDate}
+                onChange={handleChangeend}
               />
             </div>
             <button
@@ -301,7 +325,7 @@ function App() {
                 className="Form-Item-Input"
                 placeholder="例）HH-MM-SS"
                 value={startDate}
-                onChange={handleChangeStartDate}
+                onChange={handleChangestart}
               />
             </div>
             <div className="Form-Item">
@@ -311,13 +335,13 @@ function App() {
                 className="Form-Item-Input"
                 placeholder="例）HH-MM-SS"
                 value={endDate}
-                onChange={handleChangeEndDate}
+                onChange={handleChangeend}
               />
             </div>
             <button
               type="button"
               className="Form-Btn"
-              onClick={() => handleClickSendButton()}
+              onClick={() => handleClickEditButton()}
             >
               更新する
             </button>
@@ -325,7 +349,11 @@ function App() {
           <button type="button" onClick={() => setShowModal(false)}>
             閉じる
           </button>
-          <button type="button" id="deleteButton" onClick={() => handleClickDeleteButton()}>
+          <button
+            type="button"
+            id="deleteButton"
+            onClick={() => handleClickDeleteButton()}
+          >
             削除する
           </button>
         </div>
